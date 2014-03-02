@@ -108,10 +108,36 @@ class JSONCache
 
 
 	/**
+	 * @function	generateContent
+	 * @role		generate content for the news page
+	 *
+	 * @param unknown_type $post_type
+	 */
+	public function generateContent($type)
+	{
+
+		global $wpdb;
+
+    if($type == "pages"){
+      $aContent = get_pages();
+    }
+    if($type == "posts"){
+      $args = array(
+        'number' => -1
+      );
+      $aContent = get_posts($args);
+    }
+		// START JVST CACHE
+		$file_written = $this->eraseAndSaveJson($this->_getSimpleFilePath($type), $aContent);
+
+		return $file_written;
+	}
+
+	/**
 	 *
 	 */
 	function add_options_page()
-	{
+  	{
 		// Debug
 		$this->setDebug(true);
 
@@ -121,12 +147,12 @@ class JSONCache
 		if(count($_POST) > 1 && isset($_POST['generate']) && $_POST['generate'] == 'oui'){
       // Generate all content
       if(isset($_POST['page']) && $_POST['page'] == '1')
-        if($this->generateContent('page') !== false)
+        if($this->generateContent('pages') !== false)
           $b_page_content_is_saved = true;
 
       // Generate all content
       if(isset($_POST['post']) && $_POST['post'] == '1')
-        if($this->generateContent('post') !== false)
+        if($this->generateContent('posts') !== false)
           $b_post_content_is_saved = true;
 
 		}
