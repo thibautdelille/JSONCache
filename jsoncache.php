@@ -19,7 +19,7 @@ class JSONCache
 {
   private $json_page_file = 'pages.json',
     $json_post_file = 'posts.json',
-		$json_dir = '/data/',
+		$json_dir = '/jsondata/',
 		$jsoncache_logo = '',
 		$DEBUG = false;
 
@@ -88,11 +88,28 @@ class JSONCache
 	/**
 	 *
 	 */
+	private function _getFolderPath()
+	{
+		$str_dir = __DIR__;
+		$a_dir = explode('/', $str_dir);
+		array_splice($a_dir, -2);
+		$str_dir = implode('/', $a_dir);
+		return $str_dir.'/uploads' . $this->json_dir;
+		return false;
+	}
+
+	/**
+	 *
+	 */
 	private function _getSimpleFilePath($p_file_name)
 	{
 
 		if($p_file_name != '')
-			return __DIR__ . $this->json_dir . $this->json_simple_dir . $p_file_name . '.json';
+			$str_dir = __DIR__;
+			$a_dir = explode('/', $str_dir);
+			array_splice($a_dir, -2);
+			$str_dir = implode('/', $a_dir);
+			return $str_dir.'/uploads' . $this->json_dir . $this->json_simple_dir . $p_file_name . '.json';
 		return false;
 	}
 
@@ -100,6 +117,12 @@ class JSONCache
 	 *
 	 */
 	function setupAdmin(){
+		$structure = $this->_getFolderPath();
+		if(!file_exists($structure)){
+			if (!mkdir($structure, 0777, true)) {
+			  echo('Failed to create folders...');
+			}
+		}
 		$this->jsoncache_logo = plugins_url( 'cache_icon.png' , __FILE__ );
 		add_action('admin_menu', array(&$this, 'setUpAdminMenu'));
 	}
