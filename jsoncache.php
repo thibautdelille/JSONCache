@@ -8,6 +8,12 @@
  * Copyright thibautdelille 2014
  *
  */
+$JSONCACHE_IMAGES_SIZE = array(
+		"thumbnail",
+		"medium",
+		"large",
+		"full"
+	);
 
 class JSONCache
 {
@@ -94,7 +100,7 @@ class JSONCache
 	 *
 	 */
 	function setupAdmin(){
-		$this->jsoncache_logo = plugins_url( 'cache_icon.gif' , __FILE__ );
+		$this->jsoncache_logo = plugins_url( 'cache_icon.png' , __FILE__ );
 		add_action('admin_menu', array(&$this, 'setUpAdminMenu'));
 	}
 
@@ -108,29 +114,53 @@ class JSONCache
 
 
 	/**
-	 * @function	generateContent
-	 * @role		generate content for the news page
+	* @function	generatePagesContent
+	* @role		generate content for the pages
+	*
+	* @param unknown_type $post_type
+	*/
+	public function generatePagesContent()
+	{
+
+	 global $wpdb;
+	 
+	 $aContent = get_pages();
+
+	 // START JVST CACHE
+	 $file_written = $this->eraseAndSaveJson($this->_getSimpleFilePath('pages'), $aContent);
+
+	 return $file_written;
+	}
+
+
+	/**
+	 * @function	generatePostsContent
+	 * @role		generate content for the posts
 	 *
 	 * @param unknown_type $post_type
 	 */
-	public function generateContent($type)
+	public function generatePostsContent()
 	{
 
-		global $wpdb;
+	  global $wpdb;
 
-    if($type == "pages"){
-      $aContent = get_pages();
-    }
-    if($type == "posts"){
-      $args = array(
-        'number' => -1
-      );
-      $aContent = get_posts($args);
-    }
-		// START JVST CACHE
-		$file_written = $this->eraseAndSaveJson($this->_getSimpleFilePath($type), $aContent);
+    $args = array(
+      'posts_per_page' => -1
+    );
+    $myposts = get_posts($args);
+    $result = array() ;
+		foreach( $myposts as $post ) :  setup_postdata($post); 
+			$post->thumbnail = wp_get_attachment_image_src( get_post_thumbnail_id($post->ID));
+			$post->medium = wp_get_attachment_image_src( get_post_thumbnail_id($post->ID), 'medium');
+			$post->large = wp_get_attachment_image_src( get_post_thumbnail_id($post->ID), 'large');
+			$post->full = wp_get_attachment_image_src( get_post_thumbnail_id($post->ID), 'full');
+	  	$file_written = $this->eraseAndSaveJson($this->_getSimpleFilePath('post_'.$post->ID), $post);
+			array_push($result, $post);
+		endforeach;
+	  // START JVST CACHE
+	  $file_written = $this->eraseAndSaveJson($this->_getSimpleFilePath('posts'), $result);
 
-		return $file_written;
+	  return $file_written;
 	}
 
 	/**
@@ -147,12 +177,12 @@ class JSONCache
 		if(count($_POST) > 1 && isset($_POST['generate']) && $_POST['generate'] == 'oui'){
       // Generate all content
       if(isset($_POST['page']) && $_POST['page'] == '1')
-        if($this->generateContent('pages') !== false)
+        if($this->generatePagesContent() !== false)
           $b_page_content_is_saved = true;
 
       // Generate all content
       if(isset($_POST['post']) && $_POST['post'] == '1')
-        if($this->generateContent('posts') !== false)
+        if($this->generatePostsContent() !== false)
           $b_post_content_is_saved = true;
 
 		}
@@ -170,7 +200,7 @@ class JSONCache
 		<div class="wrap">
 			<h2>JSON CACHE SYSTEM</h2>
 			<div class="important_notice">
-				<img src="../wp-content/plugins/JSONcache/warning.png" />
+				<img src="../wp-content/plugins/json-cache/warning.png" />
 				<p>
 				This plugin handles the cached content on the site.<br/>
 				When you click on the button <b><i>Generate Cached Content</i></b>, all the site content will be generated in a server-cache format (JSON).<br/>
@@ -188,19 +218,36 @@ class JSONCache
 			<div class="result">
 				<?php if($b_post_content_is_saved){?>
 				<div class="results_message">
-					<img src="../wp-content/plugins/JSONcache/check-icon.png"/>
+					<img src="../wp-content/plugins/json-cache/check-icon.png"/>
 					<h3>Page cache generated</h3>
 				</div>
 				<?php }?>
 				<?php if($b_page_content_is_saved){?>
 				<div class="results_message">
-					<img src="../wp-content/plugins/JSONcache/check-icon.png"/>
+					<img src="../wp-content/plugins/json-cache/check-icon.png"/>
 					<h3>Post cache generated</h3>
 				</div>
 				<?php }?>
 			</div>
 		</div>
 		<?php
+	}
+
+	/**
+	 *
+	 * @param unknown_type $p_debug
+	 */
+	function addImageSize($p_size)
+	{
+		$bExist = false;
+		foreach ($JSONCACHE_IMAGES_SIZE as $i => $size) {
+			if($size === $p_size){
+				$bExist = true;
+			}
+		}
+		if(!$bExist){
+			array_push($JSONCACHE_IMAGES_SIZE, $p_size);
+		}
 	}
 
 
