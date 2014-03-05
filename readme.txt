@@ -4,7 +4,7 @@ Donate link: http://www.thibautdelille.com/
 Tags: cache, json, performance
 Requires at least: 3.0.1
 Tested up to: 3.4
-Stable tag: trunk
+Stable tag: v0.1
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -36,7 +36,7 @@ $jsonpages = $json_cache->getJsonData('pages');
 
 = Getting a specific post = 
 $json_cache = new JSONCache();
-$jsonpost = $json_cache->getJsonData('[post_1]');
+$jsonpost = $json_cache->getJsonData('post_1');
 
 = Settings =  
 you can also add a custom image size:

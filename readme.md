@@ -31,7 +31,7 @@ $jsonpages = $json_cache->getJsonData('pages');
 **Getting a specific post**
 ```
 $json_cache = new JSONCache();
-$jsonpost = $json_cache->getJsonData('[post_1]');
+$jsonpost = $json_cache->getJsonData('post_1');
 ```
 
 #### Settings 
