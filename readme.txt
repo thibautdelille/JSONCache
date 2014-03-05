@@ -17,6 +17,9 @@ Wordpress can be sometimes slow and make a lot of call to the database when you 
 
 JSON Cache fix this issue. it allow you to generate a json file that content all the informations of a post so the user when visiting your site just need to open the json file.   
 
+== Screenshots ==
+1. Menu Setting of JSON Cache to generate the cache. assets/screenshot-1.png
+
 == Installation ==
 1. Upload `json-cache` to the `/wp-content/plugins/` directory
 2. Activate the plugin through the 'Plugins' menu in WordPress
