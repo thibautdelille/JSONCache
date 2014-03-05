@@ -6,7 +6,7 @@ Wordpress can be sometimes slow and make a lot of call to the database when you 
 
 JSON Cache fix this issue. it allow you to generate a json file that content all the informations of a post so the user when visiting your site just need to open the json file.   
 
-### How to use
+## How to use
 #### Installation
 1. clone the repo in your plugin folder
 2. go to wp-admin>plugins and activate the plugin
@@ -38,6 +38,8 @@ you can also add a custom image size:
 $json_cache = new JSONCache();
 $json_cache->add_image_size( 'thibautdelille-full-width');
 ```	
+
+## Copyright and license
 
 Copyright (C) 2014  Thibaut Delille
 
