@@ -14,19 +14,19 @@ JSON Cache fix this issue. it allow you to generate a json file that content all
 
 
 #### Getting the datas
-*Getting all posts*
+**Getting all posts**
 ```
 $json_cache = new JSONCache();
 $jsonposts = $json_cache->getJsonData('posts');
 ```
 
-*Getting all pages*
+**Getting all pages**
 ```
 $json_cache = new JSONCache();
 $jsonpages = $json_cache->getJsonData('pages');
 ```
 
-*Getting a specific post*
+**Getting a specific post**
 ```
 $json_cache = new JSONCache();
 $jsonpost = $json_cache->getJsonData('[post_1]');
