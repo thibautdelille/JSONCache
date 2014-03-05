@@ -31,3 +31,10 @@ $jsonpages = $json_cache->getJsonData('pages');
 $json_cache = new JSONCache();
 $jsonpost = $json_cache->getJsonData('[post_1]');
 ```
+
+#### Settings 
+you can also add a custom image size:
+```
+$json_cache = new JSONCache();
+$json_cache->add_image_size( 'thibautdelille-full-width');
+```	

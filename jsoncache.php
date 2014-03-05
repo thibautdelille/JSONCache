@@ -165,7 +165,7 @@ class JSONCache
 	public function generatePostsContent()
 	{
 
-	  global $wpdb;
+	  global $wpdb, $JSONCACHE_IMAGES_SIZE;
 
     $args = array(
       'posts_per_page' => -1
@@ -173,10 +173,9 @@ class JSONCache
     $myposts = get_posts($args);
     $result = array() ;
 		foreach( $myposts as $post ) :  setup_postdata($post); 
-			$post->thumbnail = wp_get_attachment_image_src( get_post_thumbnail_id($post->ID));
-			$post->medium = wp_get_attachment_image_src( get_post_thumbnail_id($post->ID), 'medium');
-			$post->large = wp_get_attachment_image_src( get_post_thumbnail_id($post->ID), 'large');
-			$post->full = wp_get_attachment_image_src( get_post_thumbnail_id($post->ID), 'full');
+			foreach ($JSONCACHE_IMAGES_SIZE as $size) {
+				$post->$size = wp_get_attachment_image_src( get_post_thumbnail_id($post->ID), $size);
+			}
 	  	$file_written = $this->eraseAndSaveJson($this->_getSimpleFilePath('post_'.$post->ID), $post);
 			array_push($result, $post);
 		endforeach;
@@ -260,8 +259,10 @@ class JSONCache
 	 *
 	 * @param unknown_type $p_debug
 	 */
-	function addImageSize($p_size)
+	function add_image_size($p_size)
 	{
+	  global $JSONCACHE_IMAGES_SIZE;
+	  
 		$bExist = false;
 		foreach ($JSONCACHE_IMAGES_SIZE as $i => $size) {
 			if($size === $p_size){
